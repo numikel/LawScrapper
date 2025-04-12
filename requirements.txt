@@ -1,0 +1,6 @@
+dotenv
+langgraph
+langchain
+langchain_anthropic
+requests
+python-dateutil
