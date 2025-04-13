@@ -11,7 +11,7 @@ class JOLScrapper():
 
     def get_acts_list(self, year: int = None, keywords: list = None, date_from: str = None, date_to: str = None) -> list:
         params = {
-            "publisher": "DU"
+            "publisher": "DU",
         }
         if (year):
             params["year"] = year
@@ -20,12 +20,15 @@ class JOLScrapper():
         if (keywords):
             params["keyword"] = ",".join(keywords)
         if (date_from):
-            params["dateFrom"] = date_from.strftime("%Y-%m-%d")
+            params["dateEffectFrom"] = date_from.strftime("%Y-%m-%d")
         if (date_to):
-            params["dateTo"] = date_to.strftime("%Y-%m-%d")
+            params["dateEffectTo"] = date_to.strftime("%Y-%m-%d")
+
         url = "https://api.sejm.gov.pl/eli/acts/search"
 
         response = requests.get(url, params = params)
+
+        print(response.url)
 
         if response.status_code == 200:
             data = response.json()
@@ -58,13 +61,13 @@ class JOLScrapper():
         formatted_list = []
         for act in self.acts:
             table = {
-                "title": act.get("title"),
+                "title": self.get_formated_value(act, "title"),
                 "inForce": True if act.get("inForce") == "IN_FORCE" else False,
-                "entryIntoForce": act.get("entryIntoForce") if act.get("entryIntoForce") else None,
-                "validFrom": act.get("validFrom") if act.get("validFrom") else None,
-                "announcementDate": act.get("announcementDate") if act.get("announcementDate") else None,
-                "changeDate": act.get("changeDate") if act.get("changeDate") else None,
-                "promulgation": act.get("promulgation") if act.get("promulgation") else None,
+                "entryIntoForce": self.get_formated_value(act, "entryIntoForce"),
+                "validFrom": self.get_formated_value(act, "validFrom"),
+                "announcementDate": self.get_formated_value(act, "announcementDate"),
+                "promulgation": self.get_formated_value(act, "promulgation"),
+                "keywords": self.get_formated_value(act, "keywords"),
                 "pdf": f"https://api.sejm.gov.pl/eli/acts/{act.get("ELI")}/text.pdf" if act.get("textPDF") else None,
                 "html": f"https://api.sejm.gov.pl/eli/acts/{act.get("ELI")}/text.html" if act.get("textHTML") else None,
             }
@@ -74,8 +77,15 @@ class JOLScrapper():
             formatted_list = json.dumps(formatted_list)
 
         return formatted_list
+    
+    def get_formated_value(self, act: dict, value: str) -> str:
+        if isinstance(act.get(value), str): 
+           return act.get(value) if act.get(value) else None
+        elif isinstance(act.get(value), list):
+           return ", ".join(act.get(value)) if act.get(value) else None  
 
 if __name__ == "__main__":
     scrapper = JOLScrapper()
-    results = scrapper.get_acts_from_last_week(keywords=["przeciwpożarow ochrona"])
-    print(results)
+    # results = scrapper.get_acts_from_last_month(keywords=["przeciwpożarow ochrona"])
+    results = scrapper.get_acts_from_last_week()
+    print(scrapper.get_formatted_list(to_json=True))
