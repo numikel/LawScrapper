@@ -68,8 +68,8 @@ class JOLScrapper():
                 "announcementDate": self.get_formated_value(act, "announcementDate"),
                 "promulgation": self.get_formated_value(act, "promulgation"),
                 "keywords": self.get_formated_value(act, "keywords"),
-                "pdf": f"https://api.sejm.gov.pl/eli/acts/{act.get("ELI")}/text.pdf" if act.get("textPDF") else None,
-                "html": f"https://api.sejm.gov.pl/eli/acts/{act.get("ELI")}/text.html" if act.get("textHTML") else None,
+                "pdf": f"https://api.sejm.gov.pl/eli/acts/{act.get('ELI')}/text.pdf" if act.get("textPDF") else None,
+                "html": f"https://api.sejm.gov.pl/eli/acts/{act.get('ELI')}/text.pdf" if act.get("textHTML") else None,
             }
             formatted_list.append(table)
         
