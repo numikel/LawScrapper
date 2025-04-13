@@ -8,7 +8,13 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
-
+    env:
+      SMTP_PORT: ${{ secrets.SMPT_PORT }}
+      SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      SMTP_FROM: ${{ secrets.SMTP_FROM }}
+      SMTP_TO: ${{ secrets.SMTP_TO }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
