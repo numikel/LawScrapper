@@ -2,14 +2,14 @@ name: Run LawScrapper
 
 on:
   schedule:
-    - cron: '30 10 * * 0'
+    - cron: '35 10 * * 0'
   workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
     env:
-      SMTP_PORT: ${{ secrets.SMPT_PORT }}
+      SMTP_PORT: 465
       SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
       SMTP_USER: ${{ secrets.SMTP_USER }}
       SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
