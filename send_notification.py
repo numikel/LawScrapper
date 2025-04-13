@@ -183,13 +183,13 @@ def send_notification(subject: str, title: str, body: str, table: str = None):
     html_part = MIMEText(html, "html")
     msg.attach(html_part)
 
-    smtp_port = os.getenv("SMTP_PORT", "465")  # Default to 465 if SMTP_PORT is not set
+    smtp_port = os.getenv("SMTP_PORT", 465)  # Default to 465 if SMTP_PORT is not set
 
     try:
         smtp_port = int(smtp_port)
     except ValueError:
         raise ValueError("SMTP_PORT must be a valid integer.")
-    
+
     with smtplib.SMTP_SSL(os.getenv("SMTP_SERVER"), int(smtp_port)) as server:
         server.login(os.getenv("SMTP_USER"), os.getenv("SMTP_PASSWORD"))
         server.send_message(msg)
