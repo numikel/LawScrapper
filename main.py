@@ -167,5 +167,3 @@ result = graph.invoke({
     "acts": [],
     "current_act": 0
 }, {"recursion_limit": 100})
-
-print(result)

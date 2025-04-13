@@ -183,7 +183,9 @@ def send_notification(subject: str, title: str, body: str, table: str = None):
     html_part = MIMEText(html, "html")
     msg.attach(html_part)
 
-    with smtplib.SMTP_SSL(os.getenv("SMTP_SERVER"), int(os.getenv("SMTP_PORT"))) as server:
+    smtp_port = os.getenv("SMTP_PORT")
+
+    with smtplib.SMTP_SSL(os.getenv("SMTP_SERVER"), int(smtp_port)) as server:
         server.login(os.getenv("SMTP_USER"), os.getenv("SMTP_PASSWORD"))
         server.send_message(msg)
 

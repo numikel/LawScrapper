@@ -28,8 +28,6 @@ class JOLScrapper():
 
         response = requests.get(url, params = params)
 
-        print(response.url)
-
         if response.status_code == 200:
             data = response.json()
             data = data.get("items")
