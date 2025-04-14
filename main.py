@@ -33,7 +33,7 @@ def no_acts_notification(state: State) -> State:
     send_notification(
         subject="[LawScrapper] Brak nowych aktów prawnych",
         title="Brak nowych aktów prawnych",
-        body="Brak nowych aktów prawnych z zakresu bezpieczeństwa pożarowego."
+        body="Brak nowych aktów prawnych w wybranym zakresie dat lub zgodnie z ustawionym słowem kluczowym"
     )
     return state
 
