@@ -81,10 +81,21 @@ class LawScrapper():
         if isinstance(act.get(value), str): 
            return act.get(value) if act.get(value) else None
         elif isinstance(act.get(value), list):
-           return ", ".join(act.get(value)) if act.get(value) else None  
+           return ", ".join(act.get(value)) if act.get(value) else None
+        
+    def get_keywords_list(self):
+        url = "https://api.sejm.gov.pl/eli/keywords"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print(f"Error request: {response.status_code}")
+
+        return data
+
 
 if __name__ == "__main__":
     scrapper = LawScrapper()
-    # results = scrapper.get_acts_from_last_month(keywords=["przeciwpożarow ochrona"])
-    results = scrapper.get_acts_from_last_week()
+    results = scrapper.get_acts_from_last_week(keywords=["przeciwpożarow ochrona"])
     print(scrapper.get_formatted_list(to_json=False))

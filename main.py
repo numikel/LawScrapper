@@ -25,7 +25,7 @@ def no_acts_notification(state: State) -> State:
     return state
 
 def process_act(state: State) -> State:
-    print("Processing act... ")
+    print(f"{(state["current_act"] + 1)/len(state["acts"])} Processing act... ")
     act = state["acts"][state["current_act"]]
     summarizer = SummarizeAct()
     content = summarizer.get_act_content(act["pdf"])
