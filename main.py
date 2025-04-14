@@ -4,18 +4,31 @@ from send_notification import send_notification
 from langgraph.graph import StateGraph, START, END
 from dotenv import load_dotenv
 from scrapper import LawScrapper
-from model import SummarizeAct
+from model import LegalActSummarizer
 
 scrapper = LawScrapper()
 
 load_dotenv()
 
 class State(TypedDict):
+    """
+    This module defines a LangGraph-based workflow for fetching recent legal acts,
+    summarizing them using an LLM (Claude), and notifying users via email.
+    """
     keyword: str
     acts: list
     current_act: int
 
 def no_acts_notification(state: State) -> State:
+    """
+    Sends a notification email informing that no new legal acts were found.
+
+    Parameters:
+        state (State): Current workflow state.
+
+    Returns:
+        State: Unchanged state after notification.
+    """
     print("Sending notification...")
     send_notification(
         subject="[LawScrapper] Brak nowych aktów prawnych",
@@ -25,30 +38,74 @@ def no_acts_notification(state: State) -> State:
     return state
 
 def process_act(state: State) -> State:
+    """
+    Processes the current act in the state by downloading its PDF content,
+    summarizing it with the LegalActSummarizer (LLM), and storing the result.
+
+    Parameters:
+        state (State): Workflow state containing the list of acts and the current index.
+
+    Returns:
+        State: Updated state with summary for the current act and incremented index.
+    """
     print(f'{(state["current_act"] + 1)/len(state["acts"])} Processing act... ')
     act = state["acts"][state["current_act"]]
-    summarizer = SummarizeAct()
-    content = summarizer.get_act_content(act["pdf"])
-    summary = summarizer.process_with_llm(content)
+    summarizer = LegalActSummarizer()
+    try:
+        content = summarizer.get_act_content(act["pdf"])
+        summary = summarizer.process_with_llm(content)
+    except Exception as e:
+        print(f"Error while summarizing act: {e}")
+        summary = "Summary unavailable"
+
     act["summary"] = summary
     state["current_act"] = state["current_act"] + 1
     return state
 
 def get_new_acts(state: State) -> State:
+    """
+    Fetches new legal acts from the last week based on the provided keyword.
+
+    Parameters:
+        state (State): Workflow state with keyword input.
+
+    Returns:
+        State: Updated state with a list of formatted legal acts.
+    """
     keyword = None
     if (state["keyword"]): 
        keyword = state["keyword"]
-    scrapper.get_acts_from_last_week(keywords=keyword)
+    acts = scrapper.get_acts_from_last_week(keywords=keyword)
     state["acts"] = scrapper.get_formatted_list()
     return state
 
 def has_new_acts(state: State)->Literal["no_acts_notification", "process_act"]:
-  if state.get("acts"):
-    return "process_act"
-  else:
-    return "no_acts_notification"
+    """
+    Decision function for LangGraph:
+    Determines if there are any acts to process.
+
+    Parameters:
+        state (State): Workflow state.
+
+    Returns:
+        str: "process_act" if acts exist, otherwise "no_acts_notification".
+    """
+    if state.get("acts"):
+      return "process_act"
+    else:
+      return "no_acts_notification"
 
 def prepare_summary_notification(state: State) -> State:
+    """
+    Prepares and sends a summary notification email containing a formatted HTML table
+    with all processed acts and their summaries.
+
+    Parameters:
+        state (State): Workflow state containing processed legal acts.
+
+    Returns:
+        State: Unchanged state after sending summary.
+    """
     print("Sending notification...")
     rows = ""
     for index, act in enumerate(state.get("acts"), 1):
@@ -136,10 +193,20 @@ def prepare_summary_notification(state: State) -> State:
     return state
   
 def has_more_acts(state: State)->Literal["prepare_summary_notification", "process_act"]:
-  if state.get("current_act") < len(state.get("acts")):
-    return "process_act"
-  else:
-    return "prepare_summary_notification"
+    """
+    Decision function for LangGraph:
+    Determines whether there are more acts to process.
+
+    Parameters:
+        state (State): Workflow state containing the list and current act index.
+
+    Returns:
+        str: "process_act" if more acts are left, otherwise "prepare_summary_notification".
+    """
+    if state.get("current_act") < len(state.get("acts")):
+      return "process_act"
+    else:
+      return "prepare_summary_notification"
 
 workflow = StateGraph(State)
 

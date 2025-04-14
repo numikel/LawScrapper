@@ -7,6 +7,27 @@ from email.mime.multipart import MIMEMultipart
 load_dotenv()
 
 def send_notification(subject: str, title: str, body: str, table: str = None):
+    """
+    Sends a styled HTML email notification via SMTP using environmental credentials.
+
+    Parameters:
+        subject (str): The subject of the email.
+        title (str): The main title to display in the email body.
+        body (str): The plain-text body content of the message.
+        table (str, optional): Optional HTML table or block to embed in the email body.
+
+    Environment Variables Required:
+        SMTP_FROM: Sender email address.
+        SMTP_TO: Recipient email address.
+        SMTP_SERVER: SMTP server address.
+        SMTP_PORT: SMTP server port (default is 465).
+        SMTP_USER: SMTP username.
+        SMTP_PASSWORD: SMTP password.
+
+    Raises:
+        ValueError: If SMTP_PORT is not a valid integer.
+        smtplib.SMTPException: If there is an issue sending the email.
+    """
     msg = MIMEMultipart("alternative")
     msg['Subject'] = subject
     msg['From'] = os.getenv('SMTP_FROM')
@@ -180,7 +201,9 @@ def send_notification(subject: str, title: str, body: str, table: str = None):
 </html>
 """
 
-    html_part = MIMEText(html, "html")
+    html_part = MIMEText(html, "html", "utf-8")
+    text_part = MIMEText(f"{title}\n\n{body}", "plain")
+    msg.attach(text_part)
     msg.attach(html_part)
 
     smtp_port = os.getenv("SMTP_PORT", 465)  # Default to 465 if SMTP_PORT is not set
@@ -193,6 +216,8 @@ def send_notification(subject: str, title: str, body: str, table: str = None):
     with smtplib.SMTP_SSL(os.getenv("SMTP_SERVER"), int(smtp_port)) as server:
         server.login(os.getenv("SMTP_USER"), os.getenv("SMTP_PASSWORD"))
         server.send_message(msg)
+
+    print(f"Email sent to {msg['To']} with subject: {subject}")
 
 if __name__ == "__main__":
     pass
