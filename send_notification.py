@@ -112,7 +112,7 @@ def send_notification(subject: str, title: str, body: str, table: str = None):
                                             <div class="space-y-3">
                                               <p class="text-base" style="line-height: 19.2px; font-size: 16px; width: 100%; margin: 0;" align="left">{body}</p>
                                               <br>
-                                              {table}
+                                              {table if table else ""}
                                             </div>
                                             <table class="s-5 w-full" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" width="100%">
                                               <tbody>

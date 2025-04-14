@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-class JOLScrapper():
+class LawScrapper():
     def __init__(self):
         self.current_date = datetime.now()
         self.current_year = self.current_date.strftime("%Y")
@@ -60,6 +60,7 @@ class JOLScrapper():
         for act in self.acts:
             table = {
                 "title": self.get_formated_value(act, "title"),
+                "summary": None,
                 "inForce": True if act.get("inForce") == "IN_FORCE" else False,
                 "entryIntoForce": self.get_formated_value(act, "entryIntoForce"),
                 "validFrom": self.get_formated_value(act, "validFrom"),
@@ -83,7 +84,7 @@ class JOLScrapper():
            return ", ".join(act.get(value)) if act.get(value) else None  
 
 if __name__ == "__main__":
-    scrapper = JOLScrapper()
+    scrapper = LawScrapper()
     # results = scrapper.get_acts_from_last_month(keywords=["przeciwpożarow ochrona"])
     results = scrapper.get_acts_from_last_week()
-    print(scrapper.get_formatted_list(to_json=True))
+    print(scrapper.get_formatted_list(to_json=False))

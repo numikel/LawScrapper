@@ -4,3 +4,4 @@ langchain
 langchain_anthropic
 requests
 python-dateutil
+PyPDF2
