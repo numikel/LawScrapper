@@ -8,7 +8,7 @@ from PyPDF2 import PdfReader
 load_dotenv()
 
 class LegalActSummarizer():
-    def __init__(self, model: str = "claude-3-5-sonnet-latest", temperature: float = 0.2, max_tokens: int = 128):
+    def __init__(self, model: str = "claude-3-7-sonnet-20250219", temperature: float = 0.2, max_tokens: int = 128):
         """
         Initializes the LLM summarizer for legal acts using Claude via LangChain.
 
