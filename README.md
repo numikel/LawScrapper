@@ -1,7 +1,7 @@
 ## 🔒 LawScrapper
 
-LawScrapper is an automated legal monitoring and summarization pipeline. It periodically checks for new legal acts published by the Polish Sejm, filters them by topic (e.g., fire safety), summarizes their content using an LLM (Claude via LangChain), and sends email notifications with formatted summaries.
----
+**LawScrapper** is an automated legal monitoring and summarization pipeline. It periodically checks for new legal acts published by the Polish Sejm, filters them by topic (e.g., fire safety), summarizes their content using an LLM (Claude via LangChain), and sends email notifications with formatted summaries.
+
 ## 🚀 Features
 
 ✅ Fetches recent legal acts using Sejm API
@@ -10,7 +10,7 @@ LawScrapper is an automated legal monitoring and summarization pipeline. It peri
 ✅ Extracts and summarizes content with Claude 3.5 (via LangChain)
 ✅ Sends email notifications with summaries and metadata in a styled HTML table
 ✅ LangGraph-based pipeline to handle conditional workflows (e.g., if no acts found)
----
+
 ## 🛠 Requirements
 Install dependencies (Python ≥ 3.10 recommended):
 
@@ -31,8 +31,8 @@ SMTP_TO=...
 ```
 
 You will need access to Anthropic's Claude model via LangChain integration (langchain-anthropic).
----
-### 📺 How to Use
+
+### 📺 How to use
 You can manually run the workflow from main.py:
 
 ```bash
@@ -45,8 +45,8 @@ It will:
 ✅ A summary notification is sent via email.
 ✅ If no acts are found, a separate info message is sent.
 ✅ You can adjust the keyword(s) and time range directly in the script logic.
----
-## 🔹 Project Structure
+
+## 🔹 Project structure
 
 ```bash
 LawScrapper/
@@ -60,7 +60,6 @@ LawScrapper/
 ├── .env                                # Environment variables (not versioned)
 ```
 
----
 ### 📂 Output
 
 Email summaries are sent to the configured recipient (SMTP_TO) and contain:
@@ -69,15 +68,14 @@ Email summaries are sent to the configured recipient (SMTP_TO) and contain:
 3) Dates (eg. entry into force date),
 4) Keywords,
 5) Link to PDF/HTML text of the act
----
-## 📍 Planned Improvements
+
+## 📍 Planned improvements
 1) CLI support for scheduling or manual triggering,
 2) Persistent database (e.g., SQLite) to track already processed acts
----
+
 ## 👤 Author
-
 Made with ❤️ by Michał Kamiński
----
-## 🗒 License
 
-This project is licensed under the MIT License. You are free to use, modify, and distribute it as you wish.
+## 🧾 License
+This project is licensed under the MIT License.
+You are free to use, modify, and distribute it as you wish.
