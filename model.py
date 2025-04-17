@@ -101,6 +101,7 @@ class LegalActSummarizer():
             return(response.content)
         except Exception as e:
             print(f"Error: {e}")
+            return (f"Error: {e}")
 
 if __name__ == "__main__":
     models = ["gpt-4.1-2025-04-14"]
