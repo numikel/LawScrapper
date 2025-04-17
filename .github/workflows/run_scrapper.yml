@@ -2,7 +2,7 @@ name: Run LawScrapper
 
 on:
   schedule:
-    - cron: '0 6 * * 1'  # 6:00 UTC = 8:00 CET (czas polski) w każdy poniedziałek
+    - cron: '0 6 * * 1' # Every Monday at 6 AM UTC
   workflow_dispatch:
 
 jobs:
