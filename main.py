@@ -225,6 +225,7 @@ graph = workflow.compile()
 result = graph.invoke({
     "acts": [],
     "current_act": 0,
-    "keyword": "przeciwpożarowa ochrona"
+    # "keyword": "przeciwpożarowa ochrona"
+    "keyword": None
 }, {"recursion_limit": 100})
 print(result)
