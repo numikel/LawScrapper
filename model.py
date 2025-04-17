@@ -1,4 +1,4 @@
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import tempfile
 import requests
@@ -8,7 +8,7 @@ from PyPDF2 import PdfReader
 load_dotenv()
 
 class LegalActSummarizer():
-    def __init__(self, model: str = "claude-3-7-sonnet-20250219", temperature: float = 0.2, max_tokens: int = 128):
+    def __init__(self, model: str = "gpt-4.1-2025-04-14", temperature: float = 0.2, max_tokens: int = 256):
         """
         Initializes the LLM summarizer for legal acts using Claude via LangChain.
 
@@ -17,7 +17,7 @@ class LegalActSummarizer():
             temperature (float): Sampling temperature for the LLM.
             max_tokens (int): Maximum token length for the generated summary.
         """
-        self.model = ChatAnthropic(
+        self.model = ChatOpenAI(
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
@@ -75,9 +75,25 @@ class LegalActSummarizer():
             messages = [
                 (
                     "system",
-                    """<rola>Jesteś radcą prawnym</rola><kontekst>Użytkownik prześle Ci akty prawne. Twoje podsumowanie trafi na listę kilkunastu takich aktów, dlatego musi być wyjątkowo zwięzłe i informacyjne.</kontekst><zadanie>Stwórz krótkie podsumowanie aktu prawnego, zawierające najważniejsze zmiany, nowe przepisy oraz tematykę. Zwróć tylko podsumowanie aktu.</zadanie><format>Tekst ciągły (bez punktów i numeracji), maksymalnie 200 znaków.</format>
-    <przykłady><dobry_przykład>Ustawa dot. ochrony danych osobowych – nowe obowiązki dla administratorów, wprowadzenie kar za niewłaściwe przetwarzanie.</dobry_przykład><zły_przykład>1. Zmiany w RODO. 2. Kary. 3. Ochrona danych – zbyt ogólne i punktowane.</zły_przykład></przykłady>""",
+                    """<prompt>
+  <rola>Jesteś radcą prawnym.</rola>
+  <kontekst>Użytkownik prześle Ci akty prawne. Twoje podsumowanie trafi na listę wielu takich aktów, więc musi być wyjątkowo zwięzłe, konkretne i unikalne.</kontekst>
+  <zadanie>Stwórz krótkie podsumowanie aktu prawnego zawierające najważniejsze zmiany, nowe przepisy oraz tematykę. Skup się wyłącznie na treści aktu. Nie twórz wstępów, wyjaśnień ani opinii.</zadanie>
+  <format>Tekst ciągły (bez punktów i numeracji), maksymalnie 200 znaków.</format>
+  <instrukcje>Jeśli nie masz wystarczających informacji w akcie, napisz: „Brak wystarczających informacji w akcie”. Nie dodawaj nic więcej.</instrukcje>
+  <przyklady>
+    <dobry_przyklad>Ustawa dot. ochrony danych osobowych – nowe obowiązki dla administratorów, wprowadzenie kar za niewłaściwe przetwarzanie.</dobry_przyklad>
+    <zly_przyklad>1. Zmiany w RODO. 2. Kary. 3. Ochrona danych.</zly_przyklad>
+  </przyklady>
+  <zakonczenie>Wygeneruj tylko tekst podsumowania. Nie dodawaj nic więcej.</zakonczenie>
+</prompt>""",
                 ),
+                ("user", "Podsumuj ten akt prawny: "),
+                ("assistant", "Oto podsumowanie aktu prawnego:"),
+                ("user", content),
+                ("assistant", "Oto podsumowanie:"),
+                ("user", "Podsumuj ten akt prawny: "),
+                ("assistant", "Oto podsumowanie aktu prawnego:"),
                 ("human",content),
             ]
 
@@ -87,8 +103,10 @@ class LegalActSummarizer():
             print(f"Error: {e}")
 
 if __name__ == "__main__":
-    summarizer = LegalActSummarizer()
-    content = summarizer.get_act_content(r"https://api.sejm.gov.pl/eli/acts/DU/2025/373/text.pdf")
-    summary = summarizer.process_with_llm(content)
+    models = ["gpt-4.1-2025-04-14"]
+    for model in models:
+        summarizer = LegalActSummarizer(model=model)
+        content = summarizer.get_act_content(r"https://api.sejm.gov.pl/eli/acts/DU/2025/394/text.pdf")
+        summary = summarizer.process_with_llm(content)
 
-    print(summary)
+        print(summary)

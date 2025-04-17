@@ -2,14 +2,14 @@ name: Run LawScrapper
 
 on:
   schedule:
-    - cron: '35 10 * * 0'
+    - cron: '0 6 * * 1'  # 6:00 UTC = 8:00 CET (czas polski) w każdy poniedziałek
   workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
     env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       SMTP_PORT: 465
       SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
       SMTP_USER: ${{ secrets.SMTP_USER }}

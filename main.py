@@ -48,7 +48,7 @@ def process_act(state: State) -> State:
     Returns:
         State: Updated state with summary for the current act and incremented index.
     """
-    print(f'{(state["current_act"] + 1)/len(state["acts"])} Processing act... ')
+    print(f'{(state["current_act"] + 1)}/{len(state["acts"])} Processing act... ')
     act = state["acts"][state["current_act"]]
     summarizer = LegalActSummarizer()
     try:
@@ -225,6 +225,7 @@ graph = workflow.compile()
 result = graph.invoke({
     "acts": [],
     "current_act": 0,
-    "keyword": "przeciwpożarowa ochrona"
+    # "keyword": "przeciwpożarowa ochrona"
+    "keyword": None
 }, {"recursion_limit": 100})
 print(result)
