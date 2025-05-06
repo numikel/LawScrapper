@@ -63,7 +63,7 @@ class LegalActSummarizer():
 
     def process_with_llm(self, content: str) -> str:
         """
-        Sends content to the Claude LLM and returns a concise summary of the legal act.
+        Sends content to the OpenAI LLM and returns a concise summary of the legal act.
     
         Parameters:
             content (str): Full plain-text content of the act to summarize.
@@ -88,13 +88,8 @@ class LegalActSummarizer():
   <zakonczenie>Wygeneruj tylko tekst podsumowania. Nie dodawaj nic więcej.</zakonczenie>
 </prompt>""",
                 ),
-                ("user", "Podsumuj ten akt prawny: "),
+                ("user", f"Podsumuj ten akt prawny: {content}"),
                 ("assistant", "Oto podsumowanie aktu prawnego:"),
-                ("user", content),
-                ("assistant", "Oto podsumowanie:"),
-                ("user", "Podsumuj ten akt prawny: "),
-                ("assistant", "Oto podsumowanie aktu prawnego:"),
-                ("human",content),
             ]
 
             response = self.model.invoke(messages)
