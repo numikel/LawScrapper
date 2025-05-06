@@ -31,8 +31,6 @@ class LawScrapper():
         }
         if (year):
             params["year"] = year
-        else:
-            params["year"] = self.current_year
         if (keywords):
             params["keyword"] = ",".join(keywords)
         if (date_from):
@@ -44,6 +42,7 @@ class LawScrapper():
 
         response = requests.get(url, params=params, headers={"Accept": "application/json"})
 
+        print(f"Request URL: {response.url}")
         if response.status_code == 200:
             data = response.json().get("items", [])
         else:
@@ -52,6 +51,7 @@ class LawScrapper():
 
         if not data:
             print("Brak aktów spełniających kryteria.")
+            return []
 
         self.acts = data
         return data
@@ -69,7 +69,15 @@ class LawScrapper():
         date_from = self.current_date - relativedelta(days=7)
         date_to = self.current_date
 
-        return self.get_acts_list(self.current_year, keywords, date_from, date_to)
+        if len(keywords) == 1:
+            return self.get_acts_list(self.current_year, keywords, date_from, date_to)
+        elif len(keywords) > 1:
+            results = []
+            for keyword in keywords:
+                self.get_acts_list(self.current_year, [keyword], date_from, date_to)
+                results.extend(self.acts)
+            self.acts = results
+            return results
     
     def get_acts_from_current_month(self, keywords: list = None):
         """
@@ -81,10 +89,19 @@ class LawScrapper():
         Returns:
             list: Filtered list of legal acts.
         """
+
         date_from = self.current_date.replace(day=1)
         date_to = self.current_date
 
-        return self.get_acts_list(self.current_year, keywords, date_from, date_to)
+        if len(keywords) == 1:
+            return self.get_acts_list(self.current_year, keywords, date_from, date_to)
+        elif len(keywords) > 1:
+            results = []
+            for keyword in keywords:
+                result = self.get_acts_list(self.current_year, [keyword], date_from, date_to)
+                results.extend(result)
+            self.acts = results
+            return results
 
     def get_acts_from_last_month(self, keywords: list = None):
         """
@@ -99,7 +116,38 @@ class LawScrapper():
         date_from = self.current_date - relativedelta(months=1)
         date_to = self.current_date
 
-        return self.get_acts_list(self.current_year, keywords, date_from, date_to)
+        if len(keywords) == 1:
+            return self.get_acts_list(self.current_year, keywords, date_from, date_to)
+        elif len(keywords) > 1:
+            results = []
+            for keyword in keywords:
+                result = self.get_acts_list(self.current_year, [keyword], date_from, date_to)
+                results.extend(result)
+            self.acts = results
+            return results
+        
+    def get_acts_from_last_year(self, keywords: list = None):
+        """
+        Returns acts from the past 365 days, optionally filtered by keywords.
+
+        Parameters:
+            keywords (list, optional): List of keywords to filter the acts.
+
+        Returns:
+            list: Filtered list of legal acts.
+        """
+        date_from = self.current_date - relativedelta(days=365)
+        date_to = self.current_date
+
+        if len(keywords) == 1:
+            return self.get_acts_list(None, keywords, date_from, date_to)
+        elif len(keywords) > 1:
+            results = []
+            for keyword in keywords:
+                result = self.get_acts_list(None, [keyword], date_from, date_to)
+                results.extend(result)
+            self.acts = results
+            return results
     
     def get_formatted_list(self, to_json=False)-> list:
         """
@@ -165,8 +213,22 @@ class LawScrapper():
 
         return data
 
-
 if __name__ == "__main__":
     scrapper = LawScrapper()
-    results = scrapper.get_acts_from_last_week(keywords=["przeciwpożarow ochrona"])
-    print(scrapper.get_formatted_list(to_json=False))
+    resultss = scrapper.get_acts_from_last_year(keywords=[
+        "bhp", 
+        "przeciwpożarowa ochrona",
+        "czynniki szkodliwe dla zdrowia", 
+        "dozór techniczny", 
+        "hałas i wibracje", 
+        "inspekcja pracy",
+        "odzież ochronna, robocza i sprzęt ochrony osobistej", 
+        "ochotnicza straż pożarna",
+        "Państwowa Straż Pożarna", 
+        "Straż Pożarna",
+        "warunki sanitarne", 
+        "warunki szkodliwe", 
+        "warunki uciążliwe", 
+        "wypadki przy pracy"
+    ])
+    print(scrapper.get_formatted_list(to_json=True))
