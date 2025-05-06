@@ -42,7 +42,6 @@ class LawScrapper():
 
         response = requests.get(url, params=params, headers={"Accept": "application/json"})
 
-        print(f"Request URL: {response.url}")
         if response.status_code == 200:
             data = response.json().get("items", [])
         else:
@@ -215,7 +214,7 @@ class LawScrapper():
 
 if __name__ == "__main__":
     scrapper = LawScrapper()
-    resultss = scrapper.get_acts_from_last_year(keywords=[
+    resultss = scrapper.get_acts_from_last_month(keywords=[
         "bhp", 
         "przeciwpożarowa ochrona",
         "czynniki szkodliwe dla zdrowia", 

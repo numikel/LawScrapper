@@ -15,7 +15,7 @@ class State(TypedDict):
     This module defines a LangGraph-based workflow for fetching recent legal acts,
     summarizing them using an LLM (Claude), and notifying users via email.
     """
-    keyword: str
+    keywords: list
     acts: list
     current_act: int
 
@@ -72,10 +72,10 @@ def get_new_acts(state: State) -> State:
     Returns:
         State: Updated state with a list of formatted legal acts.
     """
-    keyword = None
-    if (state["keyword"]): 
-       keyword = state["keyword"]
-    acts = scrapper.get_acts_from_last_week(keywords=keyword)
+    keywords = None
+    if (state["keywords"]): 
+       keywords = state["keywords"]
+    acts = scrapper.get_acts_from_last_week(keywords=keywords)
     state["acts"] = scrapper.get_formatted_list()
     return state
 
@@ -186,7 +186,7 @@ def prepare_summary_notification(state: State) -> State:
     
     send_notification(
         subject="[LawScrapper] Zmiany prawne w ostatnim tygodniu",
-        title="Lista aktów prawnych, które weszły w życie w ostatnim tygodniu.",
+        title="Lista aktów prawnych, które weszły w życie w ostatnim tygodniu",
         body= "Poniżej lista aktów prawnych, które weszły w życie w ostatnim tygodniu",
         table = table
     )
@@ -225,6 +225,21 @@ graph = workflow.compile()
 result = graph.invoke({
     "acts": [],
     "current_act": 0,
-    "keyword": "przeciwpożarowa ochrona"
+    "keywords": [
+        "bhp", 
+        "przeciwpożarowa ochrona",
+        "czynniki szkodliwe dla zdrowia", 
+        "dozór techniczny", 
+        "hałas i wibracje", 
+        "inspekcja pracy",
+        "odzież ochronna, robocza i sprzęt ochrony osobistej", 
+        "ochotnicza straż pożarna",
+        "Państwowa Straż Pożarna", 
+        "Straż Pożarna",
+        "warunki sanitarne", 
+        "warunki szkodliwe", 
+        "warunki uciążliwe", 
+        "wypadki przy pracy"
+    ]
 }, {"recursion_limit": 100})
 print(result)
