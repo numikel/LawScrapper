@@ -13,7 +13,7 @@ load_dotenv()
 class State(TypedDict):
     """
     This module defines a LangGraph-based workflow for fetching recent legal acts,
-    summarizing them using an LLM (Claude), and notifying users via email.
+    summarizing them using an LLM (OpenAI), and notifying users via email.
     """
     keywords: list
     acts: list

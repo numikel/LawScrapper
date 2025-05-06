@@ -10,10 +10,10 @@ load_dotenv()
 class LegalActSummarizer():
     def __init__(self, model: str = "gpt-4.1-mini-2025-04-14", temperature: float = 0.2, max_tokens: int = 256):
         """
-        Initializes the LLM summarizer for legal acts using Claude via LangChain.
+        Initializes the LLM summarizer for legal acts using OpenAI via LangChain.
 
         Parameters:
-            model (str): The Claude model identifier to use.
+            model (str): The OpenAI model identifier to use.
             temperature (float): Sampling temperature for the LLM.
             max_tokens (int): Maximum token length for the generated summary.
         """
