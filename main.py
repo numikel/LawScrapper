@@ -18,7 +18,7 @@ from scrapper import LawScrapper
 from model import LegalActSummarizer
 from logger import Logger
 
-logger = Logger(to_file=True).get_logger()
+logger = Logger(to_file=False).get_logger()
 
 scrapper = LawScrapper()
 
