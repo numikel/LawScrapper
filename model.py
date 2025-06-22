@@ -75,21 +75,11 @@ class LegalActSummarizer():
             str: Short, context-aware summary (max 200 characters) or None if an error occurs.
         """
         try:
+            system_prompt = self._get_prompt("summary")
             messages = [
                 (
                     "system",
-                    """<prompt>
-  <rola>Jesteś radcą prawnym.</rola>
-  <kontekst>Użytkownik prześle Ci akty prawne. Twoje podsumowanie trafi na listę wielu takich aktów, więc musi być wyjątkowo zwięzłe, konkretne i unikalne.</kontekst>
-  <zadanie>Stwórz krótkie podsumowanie aktu prawnego zawierające najważniejsze zmiany, nowe przepisy oraz tematykę. Skup się wyłącznie na treści aktu. Nie twórz wstępów, wyjaśnień ani opinii.</zadanie>
-  <format>Tekst ciągły (bez punktów i numeracji), maksymalnie 200 znaków.</format>
-  <instrukcje>Jeśli nie masz wystarczających informacji w akcie, napisz: „Brak wystarczających informacji w akcie”. Nie dodawaj nic więcej.</instrukcje>
-  <przyklady>
-    <dobry_przyklad>Ustawa dot. ochrony danych osobowych – nowe obowiązki dla administratorów, wprowadzenie kar za niewłaściwe przetwarzanie.</dobry_przyklad>
-    <zly_przyklad>1. Zmiany w RODO. 2. Kary. 3. Ochrona danych.</zly_przyklad>
-  </przyklady>
-  <zakonczenie>Wygeneruj tylko tekst podsumowania. Nie dodawaj nic więcej.</zakonczenie>
-</prompt>""",
+                    system_prompt
                 ),
                 ("user", f"Podsumuj ten akt prawny: {content}"),
                 ("assistant", "Oto podsumowanie aktu prawnego:"),
@@ -100,6 +90,10 @@ class LegalActSummarizer():
         except Exception as e:
             logger.error(f"Error: {e}")
             return (f"Error: {e}")
+        
+    def _get_prompt(self, prompt_name: str):
+        with open(f"prompts/{prompt_name}.md", "r") as file:
+            return file.read()
 
 if __name__ == "__main__":
     models = ["gpt-4.1-2025-04-14"]

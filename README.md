@@ -12,6 +12,8 @@
 ✅ LangGraph-based pipeline to handle conditional workflows (e.g., if no acts found)  
 ✅ Singleton logger pattern for consistent logging across all modules  
 ✅ Comprehensive error handling and logging  
+✅ External prompt templates for customizable AI summaries  
+✅ Flexible logging configuration (console or file output)  
 
 ## 🛠 Requirements
 Install dependencies (Python ≥ 3.10 recommended):
@@ -48,6 +50,12 @@ It will:
 ✅ If no acts are found, a separate info message is sent.  
 ✅ You can adjust the keyword(s) and time range directly in the script logic.
 
+### ⚙️ Configuration
+- **Logging**: Change `Logger(to_file=False)` in `main.py` to log to console instead of files
+- **AI Prompts**: Customize summarization by editing `prompts/summary.md`
+- **Keywords**: Modify the keywords list in `main.py` to filter different types of legal acts
+- **Time Range**: Use different scrapper methods (`get_acts_from_last_month`, `get_acts_from_current_month`, etc.)
+
 ## 🔹 Project structure
 
 ```bash
@@ -58,6 +66,8 @@ LawScrapper/
 ├── scrapper.py                         # Sejm API client and data formatter
 ├── send_notification.py                # Styled HTML email sender via SMTP
 ├── logger.py                           # Singleton logger for consistent logging
+├── prompts/                            # External prompt templates for AI
+│   └── summary.md                      # Legal act summarization prompt
 ├── logs/                               # Directory for log files
 ├── venv/                               # Virtual environment
 ├── requirements.txt                    # Python dependencies
@@ -83,6 +93,9 @@ Email summaries are sent to the configured recipient (SMTP_TO) and contain:
 - ✅ **Improved scrapper logic** - Enhanced deduplication using ELI identifiers
 - ✅ **Better error handling** - More robust error handling throughout the pipeline
 - ✅ **Optimized performance** - Reduced redundant API calls and improved memory usage
+- ✅ **External prompt templates** - AI prompts moved to separate `prompts/` directory for easy customization
+- ✅ **Flexible logging** - Configurable console or file logging via `to_file` parameter
+- ✅ **Timestamp-based log files** - Unique log file names with timestamp for better tracking
 
 ### v1.0.0 (Initial Release)
 - 🚀 Basic legal act scraping and summarization functionality

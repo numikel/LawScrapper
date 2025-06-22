@@ -43,6 +43,9 @@ class LawScrapper():
 
         url = "https://api.sejm.gov.pl/eli/acts/search"
 
+        # Log the full URL with parameters for debugging purposes, but use the original requests.get with params
+        full_url = requests.Request('GET', url, params=params).prepare().url
+        logger.info(f"Request URL: {full_url}")
         response = requests.get(url, params=params, headers={"Accept": "application/json"})
 
         if response.status_code == 200:
@@ -54,6 +57,8 @@ class LawScrapper():
         if not data:
             logger.warning("No acts matching the criteria were found.")
             return []
+        else:
+            logger.info(f"Found {len(data)} acts")
 
         self.acts.extend(data)
         return data
@@ -203,7 +208,7 @@ class LawScrapper():
                 "validFrom": self.get_formated_value(act, "validFrom"),
                 "announcementDate": self.get_formated_value(act, "announcementDate"),
                 "promulgation": self.get_formated_value(act, "promulgation"),
-                "keywords": self.get_formated_value(act, "keywords"),
+                "keywords": self.get_formated_value(act, "keywordsNames"),
                 "pdf": f"https://api.sejm.gov.pl/eli/acts/{act.get('ELI')}/text.pdf" if act.get("textPDF") else None,
                 "html": f"https://api.sejm.gov.pl/eli/acts/{act.get('ELI')}/text.html" if act.get("textHTML") else None,
             }
