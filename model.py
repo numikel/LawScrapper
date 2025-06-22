@@ -4,6 +4,9 @@ import tempfile
 import requests
 import os
 from PyPDF2 import PdfReader
+from logger import Logger
+
+logger = Logger(to_file=True).get_logger()
 
 load_dotenv()
 
@@ -43,7 +46,7 @@ class LegalActSummarizer():
             response = requests.get(url)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
             return None
 
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
@@ -95,7 +98,7 @@ class LegalActSummarizer():
             response = self.model.invoke(messages)
             return(response.content)
         except Exception as e:
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
             return (f"Error: {e}")
 
 if __name__ == "__main__":
@@ -105,4 +108,4 @@ if __name__ == "__main__":
         content = summarizer.get_act_content(r"https://api.sejm.gov.pl/eli/acts/DU/2025/394/text.pdf")
         summary = summarizer.process_with_llm(content)
 
-        print(summary)
+        logger.info(summary)

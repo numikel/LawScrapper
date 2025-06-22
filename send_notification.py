@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from logger import Logger
+
+logger = Logger(to_file=True).get_logger()
 
 load_dotenv()
 
@@ -217,7 +220,7 @@ def send_notification(subject: str, title: str, body: str, table: str = None):
         server.login(os.getenv("SMTP_USER"), os.getenv("SMTP_PASSWORD"))
         server.send_message(msg)
 
-    print(f"Email sent to {msg['To']} with subject: {subject}")
+    logger.info(f"Email sent to {msg['To']} with subject: {subject}")
 
 if __name__ == "__main__":
     pass

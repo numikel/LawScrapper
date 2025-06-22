@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from typing import Literal
 from typing_extensions import TypedDict
 from send_notification import send_notification
@@ -5,6 +7,9 @@ from langgraph.graph import StateGraph, START, END
 from dotenv import load_dotenv
 from scrapper import LawScrapper
 from model import LegalActSummarizer
+from logger import Logger
+
+logger = Logger(to_file=True).get_logger()
 
 scrapper = LawScrapper()
 
@@ -29,7 +34,7 @@ def no_acts_notification(state: State) -> State:
     Returns:
         State: Unchanged state after notification.
     """
-    print("Sending notification...")
+    logger.info("Sending notification...")
     send_notification(
         subject="[LawScrapper] Brak nowych aktów prawnych",
         title="Brak nowych aktów prawnych",
@@ -48,14 +53,14 @@ def process_act(state: State) -> State:
     Returns:
         State: Updated state with summary for the current act and incremented index.
     """
-    print(f'{(state["current_act"] + 1)}/{len(state["acts"])} Processing act... ')
+    logger.info(f'{(state["current_act"] + 1)}/{len(state["acts"])} Processing act... ')
     act = state["acts"][state["current_act"]]
     summarizer = LegalActSummarizer()
     try:
         content = summarizer.get_act_content(act["pdf"])
         summary = summarizer.process_with_llm(content)
     except Exception as e:
-        print(f"Error while summarizing act: {e}")
+        logger.error(f"Error while summarizing act: {e}")
         summary = "Summary unavailable"
 
     act["summary"] = summary
@@ -106,7 +111,7 @@ def prepare_summary_notification(state: State) -> State:
     Returns:
         State: Unchanged state after sending summary.
     """
-    print("Sending notification...")
+    logger.info("Sending notification...")
     rows = ""
     for index, act in enumerate(state.get("acts"), 1):
        rows += f"""<tr style="">
@@ -242,4 +247,4 @@ result = graph.invoke({
         "wypadki przy pracy"
     ]
 }, {"recursion_limit": 100})
-print(result)
+logger.info(result)

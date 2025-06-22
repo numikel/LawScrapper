@@ -2,6 +2,9 @@ import requests
 import json
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from logger import Logger
+
+logger = Logger(to_file=True).get_logger()
 
 class LawScrapper():
     def __init__(self):
@@ -45,14 +48,14 @@ class LawScrapper():
         if response.status_code == 200:
             data = response.json().get("items", [])
         else:
-            print(f"Error request: {response.status_code}")
+            logger.error(f"Error request: {response.status_code}")
             data = []
 
         if not data:
-            print("Brak aktów spełniających kryteria.")
+            logger.warning("No acts matching the criteria were found.")
             return []
 
-        self.acts = data
+        self.acts.extend(data)
         return data
     
     def get_acts_from_last_week(self, keywords: list = None):
@@ -69,14 +72,22 @@ class LawScrapper():
         date_to = self.current_date
 
         if len(keywords) == 1:
+            self.acts = []  # Clear previous results
             return self.get_acts_list(self.current_year, keywords, date_from, date_to)
         elif len(keywords) > 1:
-            results = []
+            all_acts = []
+            seen_elis = set()  # Track unique ELI identifiers to avoid duplicates
             for keyword in keywords:
-                self.get_acts_list(self.current_year, [keyword], date_from, date_to)
-                results.extend(self.acts)
-            self.acts = results
-            return results
+                self.acts = []  # Clear previous results before each search
+                result = self.get_acts_list(self.current_year, [keyword], date_from, date_to)
+                # Add only unique acts based on ELI identifier
+                for act in result:
+                    eli = act.get('ELI')
+                    if eli and eli not in seen_elis:
+                        seen_elis.add(eli)
+                        all_acts.append(act)
+            self.acts = all_acts
+            return all_acts
     
     def get_acts_from_current_month(self, keywords: list = None):
         """
@@ -93,14 +104,22 @@ class LawScrapper():
         date_to = self.current_date
 
         if len(keywords) == 1:
+            self.acts = []  # Clear previous results
             return self.get_acts_list(self.current_year, keywords, date_from, date_to)
         elif len(keywords) > 1:
-            results = []
+            all_acts = []
+            seen_elis = set()  # Track unique ELI identifiers to avoid duplicates
             for keyword in keywords:
+                self.acts = []  # Clear previous results before each search
                 result = self.get_acts_list(self.current_year, [keyword], date_from, date_to)
-                results.extend(result)
-            self.acts = results
-            return results
+                # Add only unique acts based on ELI identifier
+                for act in result:
+                    eli = act.get('ELI')
+                    if eli and eli not in seen_elis:
+                        seen_elis.add(eli)
+                        all_acts.append(act)
+            self.acts = all_acts
+            return all_acts
 
     def get_acts_from_last_month(self, keywords: list = None):
         """
@@ -116,14 +135,22 @@ class LawScrapper():
         date_to = self.current_date
 
         if len(keywords) == 1:
+            self.acts = []  # Clear previous results
             return self.get_acts_list(self.current_year, keywords, date_from, date_to)
         elif len(keywords) > 1:
-            results = []
+            all_acts = []
+            seen_elis = set()  # Track unique ELI identifiers to avoid duplicates
             for keyword in keywords:
+                self.acts = []  # Clear previous results before each search
                 result = self.get_acts_list(self.current_year, [keyword], date_from, date_to)
-                results.extend(result)
-            self.acts = results
-            return results
+                # Add only unique acts based on ELI identifier
+                for act in result:
+                    eli = act.get('ELI')
+                    if eli and eli not in seen_elis:
+                        seen_elis.add(eli)
+                        all_acts.append(act)
+            self.acts = all_acts
+            return all_acts
         
     def get_acts_from_last_year(self, keywords: list = None):
         """
@@ -139,14 +166,22 @@ class LawScrapper():
         date_to = self.current_date
 
         if len(keywords) == 1:
+            self.acts = []  # Clear previous results
             return self.get_acts_list(None, keywords, date_from, date_to)
         elif len(keywords) > 1:
-            results = []
+            all_acts = []
+            seen_elis = set()  # Track unique ELI identifiers to avoid duplicates
             for keyword in keywords:
+                self.acts = []  # Clear previous results before each search
                 result = self.get_acts_list(None, [keyword], date_from, date_to)
-                results.extend(result)
-            self.acts = results
-            return results
+                # Add only unique acts based on ELI identifier
+                for act in result:
+                    eli = act.get('ELI')
+                    if eli and eli not in seen_elis:
+                        seen_elis.add(eli)
+                        all_acts.append(act)
+            self.acts = all_acts
+            return all_acts
     
     def get_formatted_list(self, to_json=False)-> list:
         """
@@ -208,13 +243,13 @@ class LawScrapper():
         if response.status_code == 200:
             data = response.json()
         else:
-            print(f"Error request: {response.status_code}")
+            logger.error(f"Error request: {response.status_code}")
 
         return data
 
 if __name__ == "__main__":
     scrapper = LawScrapper()
-    resultss = scrapper.get_acts_from_last_month(keywords=[
+    results = scrapper.get_acts_from_last_month(keywords=[
         "bhp", 
         "przeciwpożarowa ochrona",
         "czynniki szkodliwe dla zdrowia", 
