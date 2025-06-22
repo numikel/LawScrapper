@@ -67,6 +67,8 @@ scrapper = LawScrapper()
 keywords = scrapper.get_keywords_list()
 print(keywords)
 ```
+You can also check the available keywords directly at: https://api.sejm.gov.pl/eli/keywords
+
 
 ## 🔹 Project structure
 
