@@ -54,7 +54,19 @@ It will:
 - **Logging**: Change `Logger(to_file=False)` in `main.py` to log to console instead of files
 - **AI Prompts**: Customize summarization by editing `prompts/summary.md`
 - **Keywords**: Modify the keywords list in `main.py` to filter different types of legal acts
+- **Available Keywords**: Check all available keywords from Sejm API using `scrapper.get_keywords_list()` method
 - **Time Range**: Use different scrapper methods (`get_acts_from_last_month`, `get_acts_from_current_month`, etc.)
+
+#### 🔍 Getting Available Keywords
+To see all available keywords for filtering legal acts:
+
+```python
+from scrapper import LawScrapper
+
+scrapper = LawScrapper()
+keywords = scrapper.get_keywords_list()
+print(keywords)
+```
 
 ## 🔹 Project structure
 
