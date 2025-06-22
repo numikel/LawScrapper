@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+LawScrapper v1.1.0
+Automated legal monitoring and summarization pipeline for Polish Sejm acts.
+
+Author: Michał Kamiński
+License: MIT
+"""
+
+__version__ = "1.1.0"
 
 from typing import Literal
 from typing_extensions import TypedDict
@@ -247,4 +256,6 @@ result = graph.invoke({
         "wypadki przy pracy"
     ]
 }, {"recursion_limit": 100})
+
+logger.info(f"LawScrapper v{__version__} execution completed")
 logger.info(result)

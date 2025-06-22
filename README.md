@@ -1,15 +1,17 @@
-## 🔒 LawScrapper
+## 🔒 LawScrapper v1.1.0
 
 **LawScrapper** is an automated legal monitoring and summarization pipeline. It periodically checks for new legal acts published by the Polish Sejm, filters them by topic (e.g., fire safety), summarizes their content using an LLM (OpenAI GPT-4.1 via LangChain), and sends email notifications with formatted summaries.
 
 ## 🚀 Features
 
 ✅ Fetches recent legal acts using Sejm API  
-✅ Filters acts by keywords  
+✅ Filters acts by keywords with duplicate removal  
 ✅ Automatically downloads PDF versions of the acts  
 ✅ Extracts and summarizes content with OpenAI GPT-4.1 (via LangChain)  
 ✅ Sends email notifications with summaries and metadata in a styled HTML table  
 ✅ LangGraph-based pipeline to handle conditional workflows (e.g., if no acts found)  
+✅ Singleton logger pattern for consistent logging across all modules  
+✅ Comprehensive error handling and logging  
 
 ## 🛠 Requirements
 Install dependencies (Python ≥ 3.10 recommended):
@@ -55,6 +57,9 @@ LawScrapper/
 ├── model.py                            # LLM summarization logic (OpenAI + PDF handling)
 ├── scrapper.py                         # Sejm API client and data formatter
 ├── send_notification.py                # Styled HTML email sender via SMTP
+├── logger.py                           # Singleton logger for consistent logging
+├── logs/                               # Directory for log files
+├── venv/                               # Virtual environment
 ├── requirements.txt                    # Python dependencies
 ├── LICENSE                             # MIT License
 ├── .env                                # Environment variables (not versioned)
@@ -69,9 +74,27 @@ Email summaries are sent to the configured recipient (SMTP_TO) and contain:
 4) Keywords,  
 5) Link to PDF/HTML text of the act  
 
+## 📝 Changelog
+
+### v1.1.0 (2025-06-22)
+🎉 **Major improvements in data handling and logging:**
+- ✅ **Fixed duplicate removal** - Now correctly handles multiple keywords without creating duplicate acts
+- ✅ **Singleton Logger pattern** - Unified logging across all modules with consistent file naming
+- ✅ **Improved scrapper logic** - Enhanced deduplication using ELI identifiers
+- ✅ **Better error handling** - More robust error handling throughout the pipeline
+- ✅ **Optimized performance** - Reduced redundant API calls and improved memory usage
+
+### v1.0.0 (Initial Release)
+- 🚀 Basic legal act scraping and summarization functionality
+- 📧 Email notifications with HTML formatting
+- 🤖 LangGraph workflow integration
+- 🔍 Keyword-based filtering
+
 ## 📍 Planned improvements
 1) CLI support for scheduling or manual triggering,  
 2) Persistent database (e.g., SQLite) to track already processed acts  
+3) Web dashboard for monitoring and configuration  
+4) Support for multiple notification channels (Slack, Teams, etc.)  
 
 ## 👤 Author
 Made with ❤️ by Michał Kamiński
