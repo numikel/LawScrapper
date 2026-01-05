@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import tempfile
 import requests
 import os
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from logger import Logger
 
 logger = Logger(to_file=True).get_logger()
