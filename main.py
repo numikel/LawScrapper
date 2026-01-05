@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-LawScrapper v1.1.0
+LawScrapper v1.1.1
 Automated legal monitoring and summarization pipeline for Polish Sejm acts.
 
 Author: Michał Kamiński
 License: MIT
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 from typing import Literal
 from typing_extensions import TypedDict
